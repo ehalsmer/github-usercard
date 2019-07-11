@@ -70,20 +70,32 @@ promise
           Using that array, iterate over it, requesting data for each user, creating a new card for each
           user, and adding that card to the DOM.
 */
+const followersArray = [];
+const followerPromise = axios.get('https://api.github.com/users/ehalsmer/followers');
 
-const followersArray = ['erika-vazquez', 'fskeen', 'DeejayEaster', 'adkhiker', 'KevinTou', 'pj-wise', 'gasingdong', 'thisbenrogers', 'daredtech', 'arvagas', 'bryanszendel', 'Kristinbarr', 'VincentCosta6', 'Luis1D', 'antilou86', 'pdadlani', ];
-
-followersArray.forEach((username)=>{
-  axios.get(`https://api.github.com/users/${username}`)
+function followers(){
+  followerPromise
   .then(data => {
-    // console.log('success!');
-    const userData = data.data;
-    const card = createCard(userData);
-    console.log(card);
-    cards.appendChild(card);
-  })
-})
-
+    // console.log(data.data);
+    const followerObjectsArray = data.data;
+    followerObjectsArray.forEach(follower => {
+      // console.log(follower.login);
+      followersArray.push(follower.login);
+    })
+    console.log(followersArray);
+    followersArray.forEach((username)=>{
+      // console.log('start');
+      axios.get(`https://api.github.com/users/${username}`)
+      .then(data => {
+        // console.log('success!');
+        const userData = data.data;
+        const card = createCard(userData);
+        // console.log(card);
+        cards.appendChild(card);
+      })
+    })
+  }
+)}
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -155,7 +167,7 @@ function createCard(user){
   following.textContent = `Following: ${user.following}`;
   bio.textContent = `Bio: ${user.bio}`;
 
-  // any event listeners?
+  // any event listeners? Not now
 
   // return card
   // console.log(card);
@@ -163,9 +175,9 @@ function createCard(user){
 }
 
 // function to get followers. followers_url returns an array of objects, each of which is a follower, with a login key giving their username. 
-// function followers(){
 
-// }
+
+followers();
 
 /* List of LS Instructors Github username's: 
   tetondan
